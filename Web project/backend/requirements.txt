@@ -1,8 +1,0 @@
-Django>=5.0
-djangorestframework
-djangorestframework-simplejwt
-drf-spectacular
-psycopg2-binary
-python-dotenv
-coverage
-locust
