@@ -1,0 +1,62 @@
+name: Backend CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test-backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: retrovault
+          POSTGRES_USER: retrovault_user
+          POSTGRES_PASSWORD: retrovault_password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U retrovault_user -d retrovault"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
+    defaults:
+      run:
+        working-directory: backend
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run migrations
+        env:
+          DJANGO_SECRET_KEY: ci-secret
+          DEBUG: "False"
+          ALLOWED_HOSTS: localhost,127.0.0.1
+          POSTGRES_DB: retrovault
+          POSTGRES_USER: retrovault_user
+          POSTGRES_PASSWORD: retrovault_password
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: "5432"
+        run: python manage.py migrate --noinput
+
+      - name: Run tests
+        env:
+          DJANGO_SECRET_KEY: ci-secret
+          DEBUG: "False"
+          ALLOWED_HOSTS: localhost,127.0.0.1
+          POSTGRES_DB: retrovault
+          POSTGRES_USER: retrovault_user
+          POSTGRES_PASSWORD: retrovault_password
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: "5432"
+        run: python manage.py test

@@ -1,0 +1,14 @@
+@startuml
+actor Customer
+participant Frontend
+participant "DRF API" as API
+database PostgreSQL
+
+Customer -> Frontend: Open login page
+Customer -> Frontend: Enter email/password
+Frontend -> API: POST /api/auth/token/
+API -> PostgreSQL: Validate credentials
+PostgreSQL --> API: User found
+API --> Frontend: access + refresh tokens
+Frontend --> Customer: Login success
+@enduml

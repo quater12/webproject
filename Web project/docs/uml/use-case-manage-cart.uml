@@ -1,0 +1,17 @@
+@startuml
+actor Customer
+participant Frontend
+participant "DRF API" as API
+database PostgreSQL
+
+Customer -> Frontend: Click "Add to cart"
+Frontend -> API: POST /api/carts/{id}/items
+API -> PostgreSQL: Insert/Update CartItem
+PostgreSQL --> API: Saved
+API --> Frontend: Updated cart
+Customer -> Frontend: Open cart page
+Frontend -> API: GET /api/carts/{id}
+API -> PostgreSQL: Fetch cart + items
+API --> Frontend: Cart JSON
+Frontend --> Customer: Show total + quantity
+@enduml
