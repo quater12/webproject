@@ -1,0 +1,17 @@
+@startuml
+!include https://raw.githubusercontent.com/plantuml-stdlib/C4-PlantUML/master/C4_Container.puml
+
+Person(customer, "Customer")
+Person(admin, "Admin")
+
+System_Boundary(retrovault, "RetroVault") {
+  Container(frontend, "Frontend", "React + Vite", "SPA interface")
+  Container(backend, "Backend API", "Django + DRF", "Business logic, JWT auth")
+  ContainerDb(db, "Database", "PostgreSQL", "Stores users, catalog, orders")
+}
+
+Rel(customer, frontend, "Uses", "HTTPS")
+Rel(admin, frontend, "Uses", "HTTPS")
+Rel(frontend, backend, "Calls REST API", "JSON/HTTPS")
+Rel(backend, db, "Reads/Writes", "SQL")
+@enduml
