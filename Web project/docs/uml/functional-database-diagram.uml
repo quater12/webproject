@@ -1,0 +1,31 @@
+@startuml Functional UML Diagram - Order Placement
+start
+:User browses catalog;
+:User searches/filters lots;
+if (User logged in?) then (no)
+  :Redirect to login/register;
+  :User logs in or registers;
+else (yes)
+endif
+:User views lot details;
+if (Add to cart?) then (yes)
+  :Add lot to cart;
+  :Update cart total;
+else (no)
+endif
+if (Add to favorites?) then (yes)
+  :Add to favorites;
+else (no)
+endif
+:User proceeds to checkout;
+:Review cart items;
+:Enter shipping details;
+:Select payment method;
+:Confirm order;
+:Create order record;
+:Update lot status to reserved;
+:Send confirmation email;
+:Redirect to order tracking;
+stop
+@enduml</content>
+<parameter name="filePath">d:\python\Web project\docs\uml\functional-database-diagram.uml

@@ -1,0 +1,121 @@
+@startuml Logical UML Diagram
+class User {
+  + id: bigint
+  + email: varchar(255)
+  + password_hash: varchar(255)
+  + first_name: varchar(100)
+  + last_name: varchar(100)
+  + is_active: boolean
+  + created_at: timestamp
+  + updated_at: timestamp
+}
+
+class Profile {
+  + id: bigint
+  + user_id: bigint <<FK>>
+  + role: varchar(20)
+  + display_name: varchar(120)
+  + phone: varchar(30)
+  + rating: decimal(3,2)
+  + deals_count: integer
+  + created_at: timestamp
+}
+
+class Lot {
+  + id: bigint
+  + seller_id: bigint <<FK>>
+  + title: varchar(120)
+  + description: text
+  + price_uah: decimal(10,2)
+  + category: varchar(30)
+  + decade: varchar(10)
+  + condition: varchar(20)
+  + status: varchar(20)
+  + tags: varchar(300)
+  + created_at: timestamp
+  + updated_at: timestamp
+}
+
+class LotImage {
+  + id: bigint
+  + lot_id: bigint <<FK>>
+  + image_url: varchar(500)
+  + is_primary: boolean
+  + created_at: timestamp
+}
+
+class Cart {
+  + id: bigint
+  + user_id: bigint <<FK>>
+  + created_at: timestamp
+  + updated_at: timestamp
+}
+
+class CartItem {
+  + id: bigint
+  + cart_id: bigint <<FK>>
+  + lot_id: bigint <<FK>>
+  + quantity: integer
+  + added_at: timestamp
+}
+
+class Favorite {
+  + id: bigint
+  + user_id: bigint <<FK>>
+  + lot_id: bigint <<FK>>
+  + created_at: timestamp
+}
+
+class Order {
+  + id: bigint
+  + buyer_id: bigint <<FK>>
+  + status: varchar(20)
+  + recipient_full_name: varchar(150)
+  + phone: varchar(30)
+  + city: varchar(120)
+  + postal_operator: varchar(30)
+  + delivery_point: varchar(255)
+  + tracking_number: varchar(120)
+  + total_amount: decimal(10,2)
+  + created_at: timestamp
+  + updated_at: timestamp
+}
+
+class OrderItem {
+  + id: bigint
+  + order_id: bigint <<FK>>
+  + lot_id: bigint <<FK>>
+  + seller_id: bigint <<FK>>
+  + unit_price: decimal(10,2)
+  + quantity: integer
+}
+
+class Review {
+  + id: bigint
+  + order_id: bigint <<FK>>
+  + buyer_id: bigint <<FK>>
+  + seller_id: bigint <<FK>>
+  + rating: smallint
+  + comment: varchar(500)
+  + created_at: timestamp
+}
+
+User ||--|| Profile
+User ||--o{ Lot : sells
+User ||--|| Cart
+User ||--o{ Favorite
+User ||--o{ Order : buys
+User ||--o{ OrderItem : sells
+User ||--o{ Review : leaves/receives
+
+Lot ||--o{ LotImage
+Lot ||--o{ CartItem
+Lot ||--o{ Favorite
+Lot ||--o{ OrderItem
+
+Cart ||--o{ CartItem
+
+Order ||--o{ OrderItem
+Order ||--|| Review
+@enduml</content>
+<parameter name="filePath">d:\python\Web project\docs\uml\logical-database-diagram.uml

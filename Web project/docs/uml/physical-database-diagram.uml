@@ -1,0 +1,135 @@
+@startuml Physical UML Diagram
+entity "User" as User {
+  * id : bigint <<PK>>
+  --
+  * email : varchar(255) <<UNIQUE>>
+  * password_hash : varchar(255)
+  * first_name : varchar(100)
+  * last_name : varchar(100)
+  * is_active : boolean
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "Profile" as Profile {
+  * id : bigint <<PK>>
+  --
+  * user_id : bigint <<FK>>
+  * role : varchar(20) CHECK(role in ['buyer','seller'])
+  * display_name : varchar(120)
+  * phone : varchar(30)
+  * rating : decimal(3,2)
+  * deals_count : integer
+  * created_at : timestamp
+}
+
+entity "Lot" as Lot {
+  * id : bigint <<PK>>
+  --
+  * seller_id : bigint <<FK>>
+  * title : varchar(120)
+  * description : text
+  * price_uah : decimal(10,2)
+  * category : varchar(30) CHECK(category in ['clothes','furniture','tech','tableware','accessories'])
+  * decade : varchar(10) CHECK(decade in ['50s','60s','70s','80s','90s'])
+  * condition : varchar(20) CHECK(condition in ['mint','good','fair'])
+  * status : varchar(20) CHECK(status in ['active','archived','reserved','sold'])
+  * tags : varchar(300)
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "LotImage" as LotImage {
+  * id : bigint <<PK>>
+  --
+  * lot_id : bigint <<FK>>
+  * image_url : varchar(500)
+  * is_primary : boolean
+  * created_at : timestamp
+}
+
+entity "Cart" as Cart {
+  * id : bigint <<PK>>
+  --
+  * user_id : bigint <<FK, UNIQUE>>
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "CartItem" as CartItem {
+  * id : bigint <<PK>>
+  --
+  * cart_id : bigint <<FK>>
+  * lot_id : bigint <<FK>>
+  * quantity : integer CHECK(quantity > 0)
+  * added_at : timestamp
+  --
+  * UNIQUE(cart_id, lot_id)
+}
+
+entity "Favorite" as Favorite {
+  * id : bigint <<PK>>
+  --
+  * user_id : bigint <<FK>>
+  * lot_id : bigint <<FK>>
+  * created_at : timestamp
+  --
+  * UNIQUE(user_id, lot_id)
+}
+
+entity "Order" as Order {
+  * id : bigint <<PK>>
+  --
+  * buyer_id : bigint <<FK>>
+  * status : varchar(20) CHECK(status in ['pending','shipped','completed'])
+  * recipient_full_name : varchar(150)
+  * phone : varchar(30)
+  * city : varchar(120)
+  * postal_operator : varchar(30)
+  * delivery_point : varchar(255)
+  * tracking_number : varchar(120)
+  * total_amount : decimal(10,2)
+  * created_at : timestamp
+  * updated_at : timestamp
+}
+
+entity "OrderItem" as OrderItem {
+  * id : bigint <<PK>>
+  --
+  * order_id : bigint <<FK>>
+  * lot_id : bigint <<FK>>
+  * seller_id : bigint <<FK>>
+  * unit_price : decimal(10,2)
+  * quantity : integer CHECK(quantity > 0)
+}
+
+entity "Review" as Review {
+  * id : bigint <<PK>>
+  --
+  * order_id : bigint <<FK, UNIQUE>>
+  * buyer_id : bigint <<FK>>
+  * seller_id : bigint <<FK>>
+  * rating : smallint CHECK(rating >= 1 AND rating <= 5)
+  * comment : varchar(500)
+  * created_at : timestamp
+}
+
+User ||--|| Profile
+User ||--o{ Lot : seller_id
+User ||--|| Cart : user_id
+User ||--o{ Favorite : user_id
+User ||--o{ Order : buyer_id
+User ||--o{ OrderItem : seller_id
+User ||--o{ Review : buyer_id/seller_id
+
+Lot ||--o{ LotImage : lot_id
+Lot ||--o{ CartItem : lot_id
+Lot ||--o{ Favorite : lot_id
+Lot ||--o{ OrderItem : lot_id
+
+Cart ||--o{ CartItem : cart_id
+
+Order ||--o{ OrderItem : order_id
+Order ||--|| Review : order_id
+@enduml</content>
+<parameter name="filePath">d:\python\Web project\docs\uml\physical-database-diagram.uml
